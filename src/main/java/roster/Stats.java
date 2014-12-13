@@ -56,15 +56,32 @@ public class Stats {
 		return null;
 	}
 
-	public List<PlayerStat> getPlayerStat(int teamNumber) {
+	public List<PlayerStat> getPlayerStat(int teamNumber, int[] playerOrder) {
 		List<PlayerStat> teamPlayers = new ArrayList<PlayerStat>();
 
 		for (PlayerStat playerStat : players) {
 			if (playerStat.teamNumber == teamNumber)
 				teamPlayers.add(playerStat);
 		}
-
+		
+		if (playerOrder == null)
 		return teamPlayers;
+		
+		return sortPlayers(teamPlayers, playerOrder);
+	}
+	
+	private List<PlayerStat> sortPlayers(List<PlayerStat> players, int[] playerOrder)
+	{
+		
+		List<PlayerStat> sortedPlayers = new ArrayList<PlayerStat>();
+		
+		for (int index : playerOrder)
+		{
+			sortedPlayers.add(players.get(index-1));
+		}
+		
+		return sortedPlayers;
+		
 	}
 
 	private void getStats(Sheet sheet) {

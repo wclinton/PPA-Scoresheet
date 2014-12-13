@@ -2,6 +2,7 @@ package roster;
 
 import java.io.IOException;
 import java.util.List;
+
 import com.itextpdf.text.DocumentException;
 
 public class Roster
@@ -11,27 +12,46 @@ public class Roster
 	/** The resulting PDF. */
 	public static final String RESULT1 = "scoresheet.pdf";
 
+	private static int week;
+	private static boolean isHome;
+	private static int homeTeamNo;
+	private static int AwayTeamNo;
+	private static int[] playerOrder;
+
 	public static void main(String[] args)
 	{
 
 		try
 		{
+			
+			parseArgs(args);
 			Stats s = new Stats();
 
 			s.load();
 
-			TeamStat homeTeamStat = s.getTeam(4);
-			List<PlayerStat> homePlayersStat = s.getPlayerStat(4);
+			TeamStat homeTeamStat = s.getTeam(homeTeamNo);
+		
 
-			TeamStat awayTeamStat = s.getTeam(5);
+			TeamStat awayTeamStat = s.getTeam(AwayTeamNo);
 
-			TeamRoster teamRoster = new TeamRoster(homeTeamStat, homePlayersStat);
+			TeamRoster homeTeamRoster;
+			TeamRoster awayTeamRoster;
 
-			TeamRoster awayRoster = new TeamRoster(awayTeamStat);
+			if (isHome)
+			{
+				List<PlayerStat> homePlayersStat = s.getPlayerStat(homeTeamNo,playerOrder);
+				homeTeamRoster = new TeamRoster(homeTeamStat, homePlayersStat);
+				awayTeamRoster = new TeamRoster(awayTeamStat);
+			}
+			else
+			{
+				List<PlayerStat> awayPlayersStats = s.getPlayerStat(AwayTeamNo,playerOrder);
+				homeTeamRoster = new TeamRoster(homeTeamStat);
+				awayTeamRoster = new TeamRoster(awayTeamStat,awayPlayersStats);
+			}
+			Scoresheet scoresheet = new Scoresheet(homeTeamRoster, awayTeamRoster);
 
-			Scoresheet scoresheet = new Scoresheet(teamRoster, awayRoster);
-
-			ScoresheetGenerator.generateScoreSheet("Dec 10-2014", 9, scoresheet, RESULT1);
+			ScoresheetGenerator.generateScoreSheet("Dec 10-2014", week, scoresheet, RESULT1);
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
@@ -44,31 +64,70 @@ public class Roster
 
 	}
 
-//	static private Scoresheet GetTestScoresheet()
-//	{
-//
-//		TeamRoster home = GetTestTeamRoster("Home Team", new String[]
-//		{ "Wade", "Troy", "Gerald", "Sharon", "Brad" }, new double[]
-//		{ 1.1, 2.2, 3.3, 4.4, 5.0 });
-//		TeamRoster away = GetTestTeamRoster("Away Team", new String[]
-//		{ "Neil", "John", "Allen", "Michelle", "Frank" }, new double[]
-//		{ 6, 7, 8, 9, 10 });
-//
-//		Scoresheet scoresheet = new Scoresheet(home, away);
-//
-//		return scoresheet;
-//	}
+	static void parseArgs(String[] args)
+	{
 
-//	static private TeamRoster GetTestTeamRoster(String name, String[] players, double[] averages)
-//	{
-//		TeamRoster roster = new TeamRoster();
-//		roster.name = name;
-//
-//		for (int i = 0; i < 5; i++)
-//		{
-//			roster.players[i] = new Player(players[i], averages[i]);
-//		}
-//
-//		return roster;
-//	}
+		// command line arguments are Week Home/Away HomeTeamNo AwayTeamNo
+		// *Player1 *PLayer2 *Player3 *PLayer4 *PLayer5
+
+		if (args.length < 4 || args.length > 9)
+		{
+			showHelp();
+			return;
+		}
+
+		int i = 0;
+
+		week = Integer.parseInt(args[i++]);
+		isHome = args[i++].compareToIgnoreCase("h") == 0;
+
+		homeTeamNo = Integer.parseInt(args[i++]);
+
+		AwayTeamNo = Integer.parseInt(args[i++]);
+
+		int j = 0;
+		while (i < args.length)
+		{
+			if (playerOrder == null)
+				playerOrder = new int[5];
+			playerOrder[j++] = Integer.parseInt(args[i++]);
+		}
+	}
+
+	static void showHelp()
+	{
+		System.out.println("Roster");
+
+		System.out.println("Command Line Arguements:");
+
+	}
+
+	// static private Scoresheet GetTestScoresheet()
+	// {
+	//
+	// TeamRoster home = GetTestTeamRoster("Home Team", new String[]
+	// { "Wade", "Troy", "Gerald", "Sharon", "Brad" }, new double[]
+	// { 1.1, 2.2, 3.3, 4.4, 5.0 });
+	// TeamRoster away = GetTestTeamRoster("Away Team", new String[]
+	// { "Neil", "John", "Allen", "Michelle", "Frank" }, new double[]
+	// { 6, 7, 8, 9, 10 });
+	//
+	// Scoresheet scoresheet = new Scoresheet(home, away);
+	//
+	// return scoresheet;
+	// }
+
+	// static private TeamRoster GetTestTeamRoster(String name, String[]
+	// players, double[] averages)
+	// {
+	// TeamRoster roster = new TeamRoster();
+	// roster.name = name;
+	//
+	// for (int i = 0; i < 5; i++)
+	// {
+	// roster.players[i] = new Player(players[i], averages[i]);
+	// }
+	//
+	// return roster;
+	// }
 }

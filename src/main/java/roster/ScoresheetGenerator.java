@@ -9,7 +9,8 @@ import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
-public class ScoresheetGenerator {
+public class ScoresheetGenerator
+{
 
 	private static String ScoreSheetUrl = "http://www.ppa8ball.com/Scoresheet.pdf";
 
@@ -20,10 +21,10 @@ public class ScoresheetGenerator {
 	static final String HomeTeamNameField = "Home team name";
 	static final String HomeTableField = "Table";
 	static final String HomeTeamNumberField = "HOME TEAM";
-	static final String[] HomeTeamPlayerFields = { "HT Player1", "HT Player2",
-			"HT Player3", "HT Player4", "HT Player5" };
-	static final String[] HomeTeamAverageFields = { "HT 1", "HT 2", "HT 3",
-			"HT 4", "HT 5" };
+	static final String[] HomeTeamPlayerFields =
+	{ "HT Player1", "HT Player2", "HT Player3", "HT Player4", "HT Player5" };
+	static final String[] HomeTeamAverageFields =
+	{ "HT 1", "HT 2", "HT 3", "HT 4", "HT 5" };
 
 	// Away Team fields
 	static final String AwayTeamNameField = "Away team name";
@@ -31,16 +32,17 @@ public class ScoresheetGenerator {
 
 	static final String AwayTeamNumberField = "AWAY TEAM";
 
-	static final String[] AwayTeamAverageFields = { "1", "2", "3", "4", "5" };
+	static final String[] AwayTeamAverageFields =
+	{ "1", "2", "3", "4", "5" };
 
-	static final String[] AwayTeamPlayerFields = { "Player", "Player_2",
-			"Player_3", "Player_4", "Player_5" };
+	static final String[] AwayTeamPlayerFields =
+	{ "Player", "Player_2", "Player_3", "Player_4", "Player_5" };
 
 	static final String PlayerField = "Player";
 
-	static public void generateScoreSheet(String date, int week,
-			Scoresheet scoresheet, String pdfout) throws IOException,
-			DocumentException {
+	static public void generateScoreSheet(String date, int week, Scoresheet scoresheet, String pdfout) throws IOException,
+			DocumentException
+	{
 		URL url = new URL(ScoreSheetUrl);
 
 		PdfReader reader = new PdfReader(url);
@@ -63,40 +65,45 @@ public class ScoresheetGenerator {
 		reader.close();
 	}
 
-	static private void SetHomeFields(AcroFields form, TeamRoster teamRoster)
-			throws IOException, DocumentException {
+	static private void SetHomeFields(AcroFields form, TeamRoster teamRoster) throws IOException, DocumentException
+	{
 		form.setField(HomeTeamNameField, teamRoster.name);
 		form.setField(HomeTeamNumberField, Integer.toString(teamRoster.number));
 
-		form.setField(HomeTableField, "H Tbl");
+		//form.setField(HomeTableField, "H Tbl");
 
 		int i = 0;
-		for (String s : HomeTeamAverageFields) {
-			form.setField(s, Double.toString(teamRoster.players[i++].average));
+		for (String s : HomeTeamAverageFields)
+		{
+			if (teamRoster.players[i] != null)
+				form.setField(s, Double.toString(teamRoster.players[i++].average));
 		}
 
 		i = 0;
-		for (String s : HomeTeamPlayerFields) {
-			form.setField(s, teamRoster.players[i++].name);
+		for (String s : HomeTeamPlayerFields)
+		{
+			if (teamRoster.players[i] != null)
+				form.setField(s, teamRoster.players[i++].name);
 		}
 
 	}
 
-	static private void SetAwayFields(AcroFields form, TeamRoster teamRoster)
-			throws IOException, DocumentException {
+	static private void SetAwayFields(AcroFields form, TeamRoster teamRoster) throws IOException, DocumentException
+	{
 		form.setField(AwayTeamNameField, teamRoster.name);
 		form.setField(AwayTeamNumberField, Integer.toString(teamRoster.number));
 		// form.setField(HomeTableField, "H Tbl");
 
 		int i = 0;
-		for (String s : AwayTeamAverageFields) {
+		for (String s : AwayTeamAverageFields)
+		{
 			if (teamRoster.players[i] != null)
-				form.setField(s,
-						Double.toString(teamRoster.players[i++].average));
+				form.setField(s, Double.toString(teamRoster.players[i++].average));
 		}
 
 		i = 0;
-		for (String s : AwayTeamPlayerFields) {
+		for (String s : AwayTeamPlayerFields)
+		{
 			if (teamRoster.players[i] != null)
 				form.setField(s, teamRoster.players[i++].name);
 		}
