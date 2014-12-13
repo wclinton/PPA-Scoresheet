@@ -38,8 +38,9 @@ public class ScoresheetGenerator {
 
 	static final String PlayerField = "Player";
 
-	static public void generateScoreSheet(String date, int week, Scoresheet scoresheet, String pdfout)
-			throws IOException, DocumentException {
+	static public void generateScoreSheet(String date, int week,
+			Scoresheet scoresheet, String pdfout) throws IOException,
+			DocumentException {
 		URL url = new URL(ScoreSheetUrl);
 
 		PdfReader reader = new PdfReader(url);
@@ -54,7 +55,7 @@ public class ScoresheetGenerator {
 
 		SetHomeFields(form, scoresheet.getHomeTeam());
 		SetAwayFields(form, scoresheet.getAwayTeam());
-		
+
 		form.setField(WeekField, Integer.toString(week));
 		form.setField(DateField, date);
 
@@ -66,7 +67,7 @@ public class ScoresheetGenerator {
 			throws IOException, DocumentException {
 		form.setField(HomeTeamNameField, teamRoster.name);
 		form.setField(HomeTeamNumberField, Integer.toString(teamRoster.number));
-		
+
 		form.setField(HomeTableField, "H Tbl");
 
 		int i = 0;
@@ -89,12 +90,15 @@ public class ScoresheetGenerator {
 
 		int i = 0;
 		for (String s : AwayTeamAverageFields) {
-			form.setField(s, Double.toString(teamRoster.players[i++].average));
+			if (teamRoster.players[i] != null)
+				form.setField(s,
+						Double.toString(teamRoster.players[i++].average));
 		}
-		
+
 		i = 0;
 		for (String s : AwayTeamPlayerFields) {
-			form.setField(s, teamRoster.players[i++].name);
+			if (teamRoster.players[i] != null)
+				form.setField(s, teamRoster.players[i++].name);
 		}
 	}
 }
