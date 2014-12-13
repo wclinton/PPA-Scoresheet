@@ -24,7 +24,8 @@ public class Roster
 		try
 		{
 			
-			parseArgs(args);
+			if (!parseArgs(args))
+				return;
 			Stats s = new Stats();
 
 			s.load();
@@ -64,7 +65,7 @@ public class Roster
 
 	}
 
-	static void parseArgs(String[] args)
+	static boolean parseArgs(String[] args)
 	{
 
 		// command line arguments are Week Home/Away HomeTeamNo AwayTeamNo
@@ -73,7 +74,7 @@ public class Roster
 		if (args.length < 4 || args.length > 9)
 		{
 			showHelp();
-			return;
+			return false;
 		}
 
 		int i = 0;
@@ -92,6 +93,8 @@ public class Roster
 				playerOrder = new int[5];
 			playerOrder[j++] = Integer.parseInt(args[i++]);
 		}
+		
+		return true;
 	}
 
 	static void showHelp()
